@@ -5,6 +5,4 @@ Trabalho de conclusão da disciplina "Desenvolvimento Web/Rest/ETL com Java / Sp
 
 2019 - UniFacef
 
-Caio Santos Freitas
-
-Luismar Pavani
+Caio Santos Freitas - Luismar Pavani
