@@ -5,6 +5,7 @@ Trabalho de conclusão da disciplina "Desenvolvimento Web/Rest/ETL com Java / Sp
 
 - Modelagem e documentação da API: https://app.swaggerhub.com/apis-docs/caiosantosf/api-escola-spring/1.0.0
 - Scripts do banco de dados: https://github.com/caiosantosf/api-escola-spring/blob/master/scripts-banco.sql
+- DER do banco de dados: https://github.com/caiosantosf/api-escola-spring/blob/master/der-escola.png
 
 Caio Santos Freitas - Luismar Pavani
 
