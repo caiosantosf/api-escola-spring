@@ -25,7 +25,7 @@ public class Professor implements Serializable {
     @Column
     private String email;
 
-    @JsonIgnoreProperties({"professor"})
+    @JsonIgnoreProperties({"professor","cursos"})
     @Transient
     private List<Materia> materias;
 

@@ -18,7 +18,7 @@ public class RestException {
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public Response exception(Exception ex) {
-     return new Response("Erro interno do servidor!");
+     return new Response("Erro interno de servidor!");
   }
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -48,7 +48,7 @@ public class RestException {
   @ExceptionHandler(HttpMessageNotReadableException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public Response exception(HttpMessageNotReadableException ex) {
-    return new Response("O corpo da requisição é inválido!");
+    return new Response("Existem erros na requisição!");
   }
 
   @ExceptionHandler(AlunoNaoPodeTerTurmasComMesmoCursoException.class)

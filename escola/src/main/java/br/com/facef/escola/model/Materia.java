@@ -27,7 +27,7 @@ public class Materia implements Serializable {
     @PrimaryKeyJoinColumn()
     private Professor professor;
 
-    @JsonIgnoreProperties({"materias"})
+    @JsonIgnoreProperties({"materias","turmas"})
     @Transient
     private List<Curso> cursos;
 

@@ -19,11 +19,11 @@ public class Curso implements Serializable {
     @Column
     private String descricao;
 
-    @JsonIgnoreProperties({"curso"})
+    @JsonIgnoreProperties({"curso","alunos"})
     @Transient
     private List<Turma> turmas;
 
-    @JsonIgnoreProperties({"curso"})
+    @JsonIgnoreProperties({"cursos"})
     @OneToMany
     @PrimaryKeyJoinColumn
     private List<Materia> materias;
