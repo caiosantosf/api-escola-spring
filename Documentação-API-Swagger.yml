@@ -1,0 +1,974 @@
+openapi: 3.0.0
+info:
+  title: API para Gestão Escolar
+  description: 'API para gestão escolar feita em Java com Spring Framework. Caio Santos Freitas e Luismar Pavani - UniFacef'
+  version: 1.0.0
+servers:
+# Added by API Auto Mocking Plugin
+  - description: Mock padrão do Swagger
+    url: https://virtserver.swaggerhub.com/caiosantosf/api-escola-spring/1.0.0
+paths:
+
+ #professor
+
+  /professores:
+    get:
+      tags:
+        - "Professores"
+      summary: Retorna os professores da escola
+      parameters:
+        - in: query
+          name: pagina
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          required: false
+          description: Pagina inicial. Se não for definido, equivale sempre ao pagina 0 (zero) que é a primeira (o limite é fixo em 10 registros por pagina).
+        - in: query
+          name: nome_contem
+          schema:
+            type: string
+            default: null
+          required: false
+          description: Filtro por nome utilizando clausula contem. Irá retornar os registros que conterem o texto pesquisado
+      responses:
+        200:
+          description: Array com os dados dos professores da escola
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/professores'
+        500:
+          description: Erro interno de servidor
+    post:
+      tags:
+        - "Professores"
+      summary: Cria um professor
+      requestBody:
+        required: true
+        description: Dados do professor para inserção. O vinculo entre professor e suas matérias é feito somente pela entidade da matéria.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                numeroRegistro:
+                  type: integer
+                email:
+                  type: string
+                  
+      responses:
+        201:
+          description: Foi criado um professor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/professores'
+        400:
+          description: Existem erros na requisição
+        500:
+          description: Erro interno de servidor
+  '/professores/{professorId}':
+    put:
+      tags:
+        - "Professores"
+      summary: Atualiza um professor
+      parameters:
+        - name: professorId
+          in: path
+          required: true
+          description: id do professor
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        required: true
+        description: Dados do professor para atualização. O vinculo entre professor e suas matérias é feito somente pela entidade da matéria.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                nome:
+                  type: string
+                numeroRegistro:
+                  type: integer
+                email:
+                  type: string
+
+      responses:
+        200:
+          description: Foi atualizado o professor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/professores'
+        400:
+          description: Existem erros na requisição
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor
+    get:
+      tags:
+        - "Professores"
+      summary: Retorna um professor por ID
+      parameters:
+        - name: professorId
+          in: path
+          required: true
+          description: id do professor
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        200:
+          description: Dados de um professor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/professores'
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor
+    delete:
+      tags:
+        - "Professores"
+      summary: Exclui um professor
+      parameters:
+        - name: professorId
+          in: path
+          required: true
+          description: id do Professor
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        200:
+          description: Registro excluído
+        403:
+          description: Registro possui relacionamentos e não pode ser excluído
+        404:
+          description: Não existe professor com o ID informado
+        500:
+          description: Erro interno de servidor        
+  
+  
+ #Matérias
+          
+  /materias:
+    get:
+      tags:
+        - "Matérias"
+      summary: Retorna as matérias da escola
+      parameters:
+        - in: query
+          name: pagina
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          required: false
+          description: Pagina inicial. Se não for definido, equivale sempre ao pagina 0 (zero) que é a primeira (o limite é fixo em 10 registros por pagina).
+        - in: query
+          name: descricao_contem
+          schema:
+            type: string
+            default: null
+          required: false
+          description: Filtro por descrição utilizando clausula contem. Irá retornar os registros que conterem o texto pesquisado
+      responses:
+        200:
+          description: Array com os dados das matérias.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/materias'
+        500:
+          description: Erro interno de servidor
+    post:
+      tags:
+        - "Matérias"
+      summary: Cria uma matéria
+      requestBody:
+        description: Dados da matéria para inserção. Pode ser passado o objeto professor somente com o ID para vincular a matéria a um professor. O vinculo com o curso é feito somente na entidade do curso.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                descricao:
+                  type: string
+                quantidadeAulas:
+                  type: integer
+                professor:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+      responses:
+        200:
+          description: Foi criada uma matéria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/materias'
+        400:
+          description: Existem erros na requisição
+        404:
+          description: Registro não encontrado (Caso o professor informado não exista)
+        500:
+          description: Erro interno de servidor
+  '/materias/{materiaId}':
+    put:
+      tags:
+        - "Matérias"
+      summary: Atualiza uma matéria
+      parameters:
+        - name: materiaId
+          in: path
+          required: true
+          description: id do matéria
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        description: Dados da matéria para atualização. Pode ser passado o objeto professor somente com o ID para vincular a matéria a um professor. O vinculo com o curso é feito somente na entidade do curso.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                descricao:
+                  type: string
+                quantidadeAulas:
+                  type: integer
+                professor:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+      responses:
+        200:
+          description: Foi atualizada a matéria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/materias'
+        400:
+          description: Existem erros na requisição
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor
+    get:
+      tags:
+        - "Matérias"
+      summary: Retorna uma matéria por ID
+      parameters:
+        - name: materiaId
+          in: path
+          required: true
+          description: id do matéria
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        200:
+          description: Dados de uma matéria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/materias'
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor
+    delete:
+      tags:
+        - "Matérias"
+      summary: Exclui uma matéria
+      parameters:
+        - name: materiaId
+          in: path
+          required: true
+          description: id da matéria
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        200:
+          description: Registro excluído
+        403:
+          description: Registro possui relacionamentos e não pode ser excluído
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor 
+
+
+ #curso
+
+  /curso:
+    get:
+      tags:
+        - "Cursos"
+      summary: Retorna os cursos da escola
+      parameters:
+        - in: query
+          name: pagina
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          required: false
+          description: Pagina inicial. Se não for definido, equivale sempre ao pagina 0 (zero) que é a primeira (o limite é fixo em 10 registros por pagina).
+        - in: query
+          name: descricao_contem
+          schema:
+            type: string
+            default: null
+          required: false
+          description: Filtro por descrição utilizando clausula contem. Irá retornar os registros que conterem o texto pesquisado
+      responses:
+        200:
+          description: Array com os dados dos cursos da escola
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/cursos'
+        500:
+          description: Erro interno de servidor
+    post:
+      tags:
+        - "Cursos"
+      summary: Cria um curso
+      requestBody:
+        description: Dados do curso para inserção. Pode ser passado um array com os IDs das matérias para vincula-las ao curso. O vinculo com as turmas é feito somente na entidade da turma.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                descricao:
+                  type: string
+                materias:
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        type: integer
+      responses:
+        201:
+          description: Foi criado um curso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cursos'
+        400:
+          description: Existem erros na requisição
+        404:
+          description: Registro não encontrado (Caso uma das matérias informadas não exista)
+        500:
+          description: Erro interno de servidor
+  '/cursos/{cursoId}':
+    put:
+      tags:
+        - "Cursos"
+      summary: Atualiza um curso
+      parameters:
+        - name: cursoId
+          in: path
+          required: true
+          description: id do curso
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        description: Dados do curso para atualização. Pode ser passado um array com os IDs das matérias para vincula-las ao curso. O vinculo com as turmas é feito somente na entidade da turma.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                descricao:
+                  type: string
+                materias:
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        type: integer
+      responses:
+        200:
+          description: Foi atualizado o curso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cursos'
+        400:
+          description: Existem erros na requisição
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor
+    get:
+      tags:
+        - "Cursos"
+      summary: Retorna um curso por ID
+      parameters:
+        - name: cursoId
+          in: path
+          required: true
+          description: id do curso
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        200:
+          description: Dados de um curso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cursos'
+        404:
+          description: Registro não econtrado
+        500:
+          description: Erro interno de servidor
+    delete:
+      tags:
+        - "Cursos"
+      summary: Exclui um curso
+      parameters:
+        - name: cursoId
+          in: path
+          required: true
+          description: id do curso
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        200:
+          description: Registro excluído
+        403:
+          description: Registro possui relacionamentos e não pode ser excluído
+        404:
+          description: Não existe curso com o ID informado
+        500:
+          description: Erro interno de servidor
+          
+ #turma
+
+  /turma:
+    get:
+      tags:
+        - "Turmas"
+      summary: Retorna as turmas da escola
+      parameters:
+        - in: query
+          name: pagina
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          required: false
+          description: Pagina inicial. Se não for definido, equivale sempre ao pagina 0 (zero) que é a primeira (o limite é fixo em 10 registros por pagina).
+        - in: query
+          name: descricao_contem
+          schema:
+            type: string
+            default: null
+          required: false
+          description: Filtro por descrição utilizando clausula contem. Irá retornar os registros que conterem o texto pesquisado
+      responses:
+        200:
+          description: Array com os dados das turmas da escola
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/turmas'
+        500:
+          description: Erro interno de servidor
+    post:
+      tags:
+        - "Turmas"
+      summary: Cria uma turma
+      requestBody:
+        description: Dados da turma para inserção. Pode ser passado o ID de um curso para vincular a turma em um curso. O vinculo com os alunos é feito somento na entidade do aluno
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                descricao:
+                  type: string
+                curso:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+
+      responses:
+        201:
+          description: Foi criado uma turma
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/turmas'
+        400:
+          description: Existem erros na requisição
+        404:
+          description: Registro não encontrado (No caso do curso informado não existir)
+        500:
+          description: Erro interno de servidor
+  '/turmas/{turmaId}':
+    put:
+      tags:
+        - "Turmas"
+      summary: Atualiza uma turma
+      parameters:
+        - name: turmaId
+          in: path
+          required: true
+          description: id da turma
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        description: Dados da turma para atualização. Pode ser passado o ID de um curso para vincular a turma em um curso. O vinculo com os alunos é feito somento na entidade do aluno
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                descricao:
+                  type: string
+                curso:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+      responses:
+        200:
+          description: Foi atualizada a turma
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/turmas'
+        400:
+          description: Existem erros na requisição
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor
+    get:
+      tags:
+        - "Turmas"
+      summary: Retorna uma turma por ID
+      parameters:
+        - name: turmaId
+          in: path
+          required: true
+          description: id da turma
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        200:
+          description: Dados de uma turma
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/turmas'
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor
+    delete:
+      tags:
+        - "Turmas"
+      summary: Exclui uma turma
+      parameters:
+        - name: turmaId
+          in: path
+          required: true
+          description: id da turma
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        200:
+          description: Registro excluído
+        403:
+          description: Registro possui relacionamentos e não pode ser excluído
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor
+
+ #aluno
+
+  /alunos:
+    get:
+      tags:
+        - "Alunos"
+      summary: Retorna os alunos da escola
+      parameters:
+        - in: query
+          name: pagina
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          required: false
+          description: Pagina inicial. Se não for definido, equivale sempre ao pagina 0 (zero) que é a primeira (o limite é fixo em 10 registros por pagina).
+        - in: query
+          name: nome_contem
+          schema:
+            type: string
+            default: null
+          required: false
+          description: Filtro por nome utilizando clausula contem. Irá retornar os registros que conterem o texto pesquisado
+      responses:
+        200:
+          description: Array com os dados dos alunos da escola
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/alunos'
+        500:
+          description: Erro interno de servidor
+    post:
+      tags:
+        - "Alunos"
+      summary: Cria um aluno
+      requestBody:
+        required: true
+        description: Dados do aluno para inserção. Pode ser passado as turmas para vincula-las ao aluno. Porém o aluno só poderá fazer parte de uma turma por curso.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nome:
+                  type: string
+                email:
+                  type: string
+                turmas:
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        type: integer
+      responses:
+        201:
+          description: Foi criado um aluno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alunos'
+        403:
+          description: Aluno não pode ter turmas com o mesmo curso
+        404:
+          description: Registro não econtrado (Caso alguma turma informada não exista)
+        400:
+          description: Existem erros na requisição
+        500:
+          description: Erro interno de servidor
+  '/alunos/{alunoId}':
+    put:
+      tags:
+        - "Alunos"
+      summary: Atualiza um Aluno
+      parameters:
+        - name: alunoId
+          in: path
+          required: true
+          description: id do aluno
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      requestBody:
+        description: Dados do aluno para atualização. Pode ser passado as turmas para vincula-las ao aluno. Porém o aluno só poderá fazer parte de uma turma por curso.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                nome:
+                  type: string
+                email:
+                  type: string
+                turmas:
+                  type: array
+                  items:
+                    properties:
+                      id:
+                        type: integer
+      responses:
+        200:
+          description: Foi atualizado um aluno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alunos'
+        400:
+          description: Existem erros na requisição
+        403:
+          description: Aluno não pode ter turmas com o mesmo curso
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor
+    get:
+      tags:
+        - "Alunos"
+      summary: Retorna um aluno por ID
+      parameters:
+        - name: alunoId
+          in: path
+          required: true
+          description: id do aluno
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        200:
+          description: Array com os dados do aluno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/alunos'
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor
+    delete:
+      tags:
+        - "Alunos"
+      summary: Exclui um aluno
+      parameters:
+        - name: alunoId
+          in: path
+          required: true
+          description: id do aluno
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        200:
+          description: Registro excluído
+        403:
+          description: Registro possui relacionamentos e não pode ser excluído
+        404:
+          description: Registro não encontrado
+        500:
+          description: Erro interno de servidor     
+    
+          
+tags:
+  - name: Professores
+    description: Entidade Professor
+  - name: Matérias
+    description: Entidade Matérias
+  - name: Cursos
+    description: Entidade Curso
+  - name: Turmas
+    description: Entidade Turma
+  - name: Alunos
+    description: Entidade Aluno
+          
+components:
+  schemas:
+    professores:
+      required:
+        - nome
+        - numeroRegistro
+        - email
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        numeroRegistro:
+          type: integer
+        email:
+          type: string
+        materias:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              descricao:
+                type: string
+              quantidadeAulas:
+                type: integer
+            
+    materias:
+      required:
+        - descricao
+        - quantidadeAulas
+      properties:
+        id:
+          type: integer
+        descricao:
+          type: string
+        quantidadeAulas:
+          type: integer
+        professor:
+          type: object
+          properties:
+            id:
+              type: integer
+            nome:
+              type: string
+            numeroRegistro:
+              type: integer
+            email:
+              type: string
+        cursos:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              descricao:
+                type: string
+                
+    cursos:
+      required:
+        - descricao
+      properties:
+        id:
+          type: integer
+        descricao:
+          type: string
+        turmas:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              descricao:
+                type: string
+        materias:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              descricao:
+                type: string
+              quantidadeAulas:
+                type: integer
+              professor:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  nome:
+                    type: string
+                  numeroRegistro:
+                    type: integer
+                  email:
+                    type: string
+                
+    turmas:
+      required:
+        - descricao
+      properties:
+        id:
+          type: integer
+        descricao:
+          type: string
+        alunos:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              nome:
+                type: string
+              email:
+                type: string    
+        curso:
+          type: object
+          properties:
+            id:
+              type: integer
+            descricao:
+              type: string
+          
+    alunos:
+      required:
+        - nome
+        - email
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        email:
+          type: string
+        turmas:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              descricao:
+                type: string
+              curso:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  descricao:
+                    type: string
